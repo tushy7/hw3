@@ -2,6 +2,8 @@
 #include <fstream>
 #include <functional>
 #include "llrec.h"
+#include <vector>
+
 using namespace std;
 
 /**
@@ -66,7 +68,45 @@ void dealloc(Node* head)
 //   Add any helper functions or
 //   function object struct declarations
 // -----------------------------------------------
+bool is_even(int a){
+    return !(a%2);
+}
 
+struct IsOdd
+{
+    bool operator()(int num) {
+        return (num % 2) != 0;
+    }
+};
+
+struct IsLessEquals
+{
+	int num2;
+	IsLessEquals(int val) : num2(val){}
+    bool operator()(int num1) {
+        return (num1 <= num2);
+    }
+};
+
+Node * makeList(std::vector<int> const & content)
+{
+	Node * head = nullptr;
+	Node * tail = nullptr;
+
+	for(auto v : content)
+	{
+		if(head == nullptr) {
+			head = new Node(v,nullptr);
+			tail = head;
+		}
+		else {
+			tail->next = new Node(v,nullptr);
+			tail = tail->next;
+		}
+
+	}
+	return head;
+}
 
 
 
@@ -86,9 +126,26 @@ int main(int argc, char* argv[])
     print(head);
 
     // Test out your linked list code
+    Node* list = makeList({2, 4, 8, 3});
+	Node* small = (Node*) &list; // set to a non-null address
+	Node* large = (Node*) &list; // set to a non-null address
 
+    llpivot(list, small, large, 5);
 
+    print(small);
+    print(large);
+    print(list);
 
+    list = makeList({2, 4, 8, 3});
+    print(list);
+    IsLessEquals islessequals(5);
+    list = llfilter(list, islessequals);
+    // Test out your linked list code
+
+    print(list);
+    print(large);
+
+    dealloc(large); dealloc(small); dealloc(list);
     
     return 0;
 
